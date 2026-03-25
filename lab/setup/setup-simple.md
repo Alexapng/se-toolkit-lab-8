@@ -38,13 +38,13 @@
 
 #### 1.1.1. Fork the course instructors' repo
 
-1. Fork the [lab's repo](https://github.com/inno-se-toolkit/se-toolkit-lab-7).
+1. Fork the [lab's repo](https://github.com/inno-se-toolkit/se-toolkit-lab-8).
 
 We refer to your fork as `fork` and to the original repo as `upstream`.
 
 #### 1.1.2. Go to your fork
 
-1. Go to your fork: `https://github.com/`**`YOUR_GITHUB_USERNAME`**`/se-toolkit-lab-7`.
+1. Go to your fork: `https://github.com/`**`YOUR_GITHUB_USERNAME`**`/se-toolkit-lab-8`.
 
 #### 1.1.3. Enable issues
 
@@ -64,7 +64,7 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
 1. Clone your fork to your local machine:
 
    ```terminal
-   git clone --recurse-submodules https://github.com/YOUR_GITHUB_USERNAME/se-toolkit-lab-7
+   git clone --recurse-submodules https://github.com/YOUR_GITHUB_USERNAME/se-toolkit-lab-8
    ```
 
    Replace **`YOUR_GITHUB_USERNAME`** with your GitHub username.
@@ -75,7 +75,7 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
 
 2. Open the forked repo in `VS Code`.
 
-3. Go to `VS Code Terminal`, [check that the current directory is `se-toolkit-lab-7`](../../wiki/shell.md#check-the-current-directory-is-directory-name), and install `Python` dependencies:
+3. Go to `VS Code Terminal`, [check that the current directory is `se-toolkit-lab-8`](../../wiki/shell.md#check-the-current-directory-is-directory-name), and install `Python` dependencies:
 
    ```terminal
    uv sync --dev
@@ -118,7 +118,7 @@ We refer to your fork as `fork` and to the original repo as `upstream`.
 ```terminal
 cd ../se-toolkit-lab-6
 docker compose --env-file .env.docker.secret down
-cd ../se-toolkit-lab-7
+cd ../se-toolkit-lab-8
 ```
 
 **On your VM** (do this now so you don't forget):
@@ -292,7 +292,7 @@ The autochecker tests your bot against your **deployed backend on your VM**. You
 3. Clone your fork on the VM:
 
    ```terminal
-   git clone --recurse-submodules https://github.com/YOUR_GITHUB_USERNAME/se-toolkit-lab-7 ~/se-toolkit-lab-7
+   git clone --recurse-submodules https://github.com/YOUR_GITHUB_USERNAME/se-toolkit-lab-8 ~/se-toolkit-lab-8
    ```
 
    Replace **`YOUR_GITHUB_USERNAME`** with your GitHub username.
@@ -300,7 +300,7 @@ The autochecker tests your bot against your **deployed backend on your VM**. You
 4. Create the environment file:
 
    ```terminal
-   cd ~/se-toolkit-lab-7
+   cd ~/se-toolkit-lab-8
    cp .env.docker.example .env.docker.secret
    ```
 
@@ -382,7 +382,7 @@ Your bot needs an LLM for the intent routing feature (Task 3). [Qwen Code](../..
 > If you set up the Qwen Code API in Lab 6, it should still be running on your VM. Verify by running this **on your VM**:
 >
 > ```terminal
-> grep QWEN_CODE_API_KEY ~/se-toolkit-lab-7/qwen-code-api/.env.secret
+> grep QWEN_CODE_API_KEY ~/se-toolkit-lab-8/qwen-code-api/.env.secret
 > ```
 >
 > This shows your key. Then test it:
@@ -434,7 +434,7 @@ You need a Telegram bot token to run your bot client.
 7. Add bot and LLM credentials to `.env.docker.secret` on your VM:
 
    ```terminal
-   cd ~/se-toolkit-lab-7
+   cd ~/se-toolkit-lab-8
    nano .env.docker.secret
    ```
 
