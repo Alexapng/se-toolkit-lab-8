@@ -32,15 +32,14 @@ In Task 1 you ran `nanobot agent` from the VM terminal. For production, nanobot 
 
    - **`Dockerfile`** — multi-stage build with `uv` (same pattern as `backend/Dockerfile`). Final CMD: `python /app/nanobot/entrypoint.py`.
 
-3. Add a `nanobot` service to `docker-compose.yml`:
+3. Uncomment the scaffolded `nanobot` service block in `docker-compose.yml` and adapt it to your implementation:
 
-   Use main's nanobot service as reference — it needs:
-   - Build context `./nanobot` with `additional_contexts: workspace: .` (so it can access `mcp/` and root `pyproject.toml`)
-   - Environment variables for LLM provider, gateway, webchat, backend URL, and backend API key
-   - `depends_on: backend`
-   - Network: `lms-network`
+   - Keep the build context at `./nanobot` with `additional_contexts: workspace: .` so the image can access `mcp/` and the root project.
+   - Check that the environment variables match what your `entrypoint.py` reads.
+   - Notice that the scaffold uses container-local URLs such as `http://backend:...` and `http://qwen-code-api:...` rather than the VM-shell `localhost` values from Task 1.
+   - Keep it on `lms-network`.
 
-4. Add a `/ws/chat` route to `caddy/Caddyfile`:
+4. Uncomment the scaffolded `/ws/chat` route in `caddy/Caddyfile`, then uncomment the related `nanobot` lines in the `caddy` service inside `docker-compose.yml`:
 
    ```
    handle /ws/chat {
@@ -48,7 +47,10 @@ In Task 1 you ran `nanobot agent` from the VM terminal. For production, nanobot 
    }
    ```
 
-   Add `nanobot` to caddy's `depends_on` and `NANOBOT_WEBCHAT_CONTAINER_PORT` to its environment.
+   You need all three pieces together:
+   - `nanobot` in caddy's `depends_on`
+   - `NANOBOT_WEBCHAT_CONTAINER_PORT` in caddy's environment
+   - the `/ws/chat` route in `Caddyfile`
 
 5. Deploy:
 
@@ -125,15 +127,14 @@ Both are in a single repository. The webchat plugin handles:
    }
    ```
 
-4. Add a `client-web-flutter` service to `docker-compose.yml`:
-   - Build from `nanobot-websocket-channel/client-web-flutter/`
-   - Output to a named volume
-   - Add the volume to the `volumes:` section
+4. Uncomment the scaffolded `client-web-flutter` service in `docker-compose.yml`:
+   - It should build from `nanobot-websocket-channel/client-web-flutter/`
+   - It should write the compiled app into the `client-web-flutter` named volume
 
-5. Update caddy:
+5. Uncomment the scaffolded Flutter-related lines in the `caddy` service and `caddy/Caddyfile`:
    - Mount the Flutter volume at `/srv/flutter:ro`
    - Add `client-web-flutter` to `depends_on`
-   - Add a `/flutter` route:
+   - Enable the `/flutter` route:
 
    ```
    handle_path /flutter* {

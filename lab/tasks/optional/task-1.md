@@ -14,7 +14,7 @@ The Telegram Bot API (`api.telegram.org`) is blocked from most Russian servers. 
 
 1. Get a Telegram bot token from [@BotFather](https://t.me/BotFather).
 
-2. Add a `client-telegram-bot` service to `docker-compose.yml`:
+2. Uncomment the scaffolded `client-telegram-bot` service in `docker-compose.yml`:
    - Build from `nanobot-websocket-channel/client-telegram-bot/`
    - Environment: `BOT_TOKEN`, `NANOBOT_WS_URL=ws://nanobot:8765`, `NANOBOT_ACCESS_KEY`
    - `depends_on: nanobot`

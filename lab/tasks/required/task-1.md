@@ -21,7 +21,7 @@ Start by reading the [official nanobot repository](https://github.com/HKUDS/nano
 
 ### What to do in Part A
 
-1. Create a repo-local `nanobot/` project and install the framework there from the official repository at the lab-tested commit:
+1. Create a repo-local `nanobot/` project and install the framework there:
 
    ```terminal
    uv init --python 3.14.2 nanobot
