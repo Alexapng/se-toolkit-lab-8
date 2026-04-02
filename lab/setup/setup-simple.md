@@ -267,6 +267,18 @@ docker compose --env-file .env.docker.secret down
 >
 > Then run the `docker compose up` command again.
 >
+> **Python 3.14 + Docker DNS hang (Qwen proxy times out but `curl` works).**
+>
+> If the Qwen proxy health is OK but LLM calls hang, and `curl https://portal.qwen.ai` works from inside the container but Python doesn't — this is a known Python 3.14 + Docker internal DNS issue. Fix by adding DNS directly to the affected service in `docker-compose.yml`:
+>
+> ```yaml
+> qwen-code-api:
+>   dns:
+>     - 8.8.8.8
+> ```
+>
+> Then restart: `docker compose --env-file .env.docker.secret up -d qwen-code-api`
+>
 > **Docker Hub rate limits (`Too many requests`).**
 >
 > If you're building outside the university network and hit Docker Hub rate limits, set the registry prefix to empty in `.env.docker.secret`:
