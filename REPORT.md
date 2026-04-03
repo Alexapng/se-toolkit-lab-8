@@ -105,11 +105,51 @@ The skill teaches the strategy: when a lab-dependent query (scores, pass rates, 
 
 ## Task 2A — Deployed agent
 
-<!-- Paste a short nanobot startup log excerpt showing the gateway started inside Docker -->
+The nanobot gateway runs as a Docker Compose service. Startup logs:
+
+```
+nanobot-1  | Using config: /app/nanobot/config.resolved.json
+nanobot-1  | 🐈 Starting nanobot gateway version 0.1.4.post5 on port 18790...
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_health' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_labs' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_learners' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_pass_rates' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_timeline' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_groups' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_top_learners' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_completion_rate' from server 'lms'
+nanobot-1  | MCP: registered tool 'mcp_lms_lms_sync_pipeline' from server 'lms'
+nanobot-1  | MCP server 'lms': connected, 9 tools registered
+nanobot-1  | Agent loop started
+```
 
 ## Task 2B — Web client
 
-<!-- Screenshot of a conversation with the agent in the Flutter web app -->
+**WebSocket test:** `echo '{"content":"How is the backend doing?"}' | websocat "ws://localhost:42002/ws/chat?access_key=1234567"`
+
+**Agent response:**
+```json
+{"type":"text","content":"The LMS backend is **healthy** with **56 items** in the database. Everything looks good! 🟢","format":"markdown"}
+```
+
+**Structured UI test:** `echo '{"content":"Show me the scores"}' | websocat ...`
+
+**Agent response (structured choice):**
+```json
+{
+  "type":"choice",
+  "content":"Which lab would you like to see scores for?",
+  "options":[
+    {"label":"Lab 01 – Products, Architecture & Roles","value":"lab-01"},
+    {"label":"Lab 02 — Run, Fix, and Deploy a Backend Service","value":"lab-02"},
+    {"label":"Lab 03 — Backend API: Explore, Debug, Implement, Deploy","value":"lab-03"},
+    ...
+  ]
+}
+```
+
+The Flutter web client is accessible at `http://<vm-ip>:42002/flutter`.
+The agent renders structured lab choices instead of raw JSON when the user asks an ambiguous question.
 
 ## Task 3A — Structured logging
 
