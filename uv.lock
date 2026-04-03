@@ -6,7 +6,10 @@ requires-python = ">=3.14.2, <3.15"
 members = [
     "lms-backend",
     "mcp-lms",
+    "mcp-webchat",
     "nanobot",
+    "nanobot-channel-protocol",
+    "nanobot-webchat",
     "qwen-code-api",
 ]
 
@@ -930,6 +933,23 @@ requires-dist = [
 ]
 
 [[package]]
+name = "mcp-webchat"
+version = "0.1.0"
+source = { editable = "nanobot-websocket-channel/mcp-webchat" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mcp" },
+    { name = "nanobot-channel-protocol" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.28.0,<1.0.0" },
+    { name = "mcp", specifier = ">=1.26.0,<2.0.0" },
+    { name = "nanobot-channel-protocol", editable = "nanobot-websocket-channel/nanobot-channel-protocol" },
+]
+
+[[package]]
 name = "mdurl"
 version = "0.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1014,7 +1034,10 @@ name = "nanobot"
 version = "0.1.0"
 source = { editable = "nanobot" }
 dependencies = [
+    { name = "mcp-lms" },
+    { name = "mcp-webchat" },
     { name = "nanobot-ai" },
+    { name = "nanobot-webchat" },
     { name = "opentelemetry-distro", extra = ["otlp"] },
     { name = "opentelemetry-exporter-otlp-proto-grpc" },
     { name = "opentelemetry-instrumentation-logging" },
@@ -1024,7 +1047,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "mcp-lms", editable = "mcp/mcp-lms" },
+    { name = "mcp-webchat", editable = "nanobot-websocket-channel/mcp-webchat" },
     { name = "nanobot-ai", url = "https://github.com/HKUDS/nanobot/archive/e7d371ec1e6531b28898ec2c869ef338e8dd46ec.zip" },
+    { name = "nanobot-webchat", editable = "nanobot-websocket-channel/nanobot-webchat" },
     { name = "opentelemetry-distro", extras = ["otlp"], specifier = ">=0.61b0" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", specifier = ">=1.40.0" },
     { name = "opentelemetry-instrumentation-logging", specifier = ">=0.61b0" },
@@ -1115,6 +1141,36 @@ requires-dist = [
     { name = "wecom-aibot-sdk-python", marker = "extra == 'wecom'", specifier = ">=0.1.5" },
 ]
 provides-extras = ["wecom", "weixin", "matrix", "langsmith", "dev"]
+
+[[package]]
+name = "nanobot-channel-protocol"
+version = "0.1.0"
+source = { editable = "nanobot-websocket-channel/nanobot-channel-protocol" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic", specifier = ">=2.12.0,<3.0.0" }]
+
+[[package]]
+name = "nanobot-webchat"
+version = "1.0.0"
+source = { editable = "nanobot-websocket-channel/nanobot-webchat" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "nanobot-ai" },
+    { name = "nanobot-channel-protocol" },
+    { name = "websockets" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.13.0,<4.0.0" },
+    { name = "nanobot-ai", url = "https://github.com/HKUDS/nanobot/archive/e7d371ec1e6531b28898ec2c869ef338e8dd46ec.zip" },
+    { name = "nanobot-channel-protocol", editable = "nanobot-websocket-channel/nanobot-channel-protocol" },
+    { name = "websockets", specifier = ">=15.0" },
+]
 
 [[package]]
 name = "nodeenv"
