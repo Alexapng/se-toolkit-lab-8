@@ -20,6 +20,20 @@ The following `mcp_obs_*` tools are available via the observability MCP server:
 
 ## Strategy
 
+### When the user asks "What went wrong?" or "Check system health"
+
+Run a full investigation in one pass:
+
+1. Call `logs_error_count` with a narrow window (e.g., 10 minutes) scoped to the LMS backend
+2. If errors found, call `logs_search` with `_time:10m service.name:"Learning Management Service" severity:ERROR` to get details and extract `trace_id` values
+3. For each `trace_id` found, call `traces_get` to inspect the failing request path and identify which span failed
+4. Summarize findings concisely in one coherent answer:
+   - Mention the affected service
+   - Cite specific log evidence (timestamp, severity, event, error message)
+   - Cite specific trace evidence (which span failed, how long it took)
+   - Name the root failing operation
+   - Do NOT dump raw JSON
+
 ### When the user asks about errors or failures
 
 1. Start with `logs_error_count` scoped to the LMS backend and a narrow time window (e.g., 10 minutes)
