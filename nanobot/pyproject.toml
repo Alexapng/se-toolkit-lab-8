@@ -16,7 +16,7 @@ dependencies = [
     "mcp-webchat",
     "nanobot-webchat",
     # Task 3 — uncomment after you add mcp-obs.
-    # "mcp-obs",
+    "mcp-obs",
     "nanobot-ai",
 ]
 

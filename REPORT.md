@@ -153,15 +153,82 @@ The agent renders structured lab choices instead of raw JSON when the user asks 
 
 ## Task 3A — Structured logging
 
-<!-- Paste happy-path and error-path log excerpts, VictoriaLogs query screenshot -->
+**Happy-path log excerpt** (request_started → request_completed with status 200):
+
+```
+backend-1  | 2026-04-03 19:41:28,693 INFO [lms_backend.main] - request_started
+backend-1  | 2026-04-03 19:41:28,694 INFO [lms_backend.auth] - auth_success
+backend-1  | 2026-04-03 19:41:28,694 INFO [lms_backend.db.items] - db_query
+backend-1  | 2026-04-03 19:41:28,720 INFO [lms_backend.main] - request_completed
+backend-1  | INFO:     172.18.0.9:52534 - "GET /items/ HTTP/1.1" 200 OK
+```
+
+Each line includes structured fields: `trace_id`, `span_id`, `service.name`, and `event`.
+
+**Error-path log excerpt** (db_query with error, postgres stopped):
+
+```
+backend-1  | 2026-04-03 19:42:14,466 ERROR [lms_backend.db.items] - db_query
+backend-1  | 2026-04-03 19:42:14,478 WARNING [lms_backend.routers.items] - items_list_failed_as_not_found
+backend-1  | INFO:     172.18.0.9:47942 - "GET /items/ HTTP/1.1" 404 Not Found
+```
+
+The ERROR entry contains: `trace_id=18b6a147608a2edb...`, `event=db_query`, full SQLAlchemy error message.
+
+**VictoriaLogs query:** `_time:10m service.name:"Learning Management Service" severity:ERROR`
+
+Returned 2 error entries with full structured JSON including `trace_id`, `error`, `span_id`, `event`.
+
+Query via HTTP API: `curl "http://localhost:42010/select/logsql/query?query=_time:10m%20service.name:%22Learning%20Management%20Service%22%20severity:ERROR"`
+
+---
 
 ## Task 3B — Traces
 
-<!-- Screenshots: healthy trace span hierarchy, error trace -->
+**Healthy trace:** The trace for a successful `GET /items/` request shows spans:
+- `request_started` → `auth_success` → `db_query` → `request_completed`
+- All spans completed in ~40ms with no errors
+- Trace ID: `0082cd4abcb6a100709f62fecbade46c`
+
+**Error trace:** When postgres was stopped, the trace shows:
+- `request_started` → `auth_success` → `db_query` (**ERROR**, 4,048ms timeout) → `request_completed` (404)
+- The `db_query` span has an error tag with "connection is closed"
+- Trace ID: `18b6a147608a2edb3dbfd3457488bc51`
+
+Traces can be found via VictoriaTraces Jaeger API:
+- `http://victoriatraces:10428/select/jaeger/api/traces?service=Learning%20Management%20Service&limit=10`
+- `http://victoriatraces:10428/select/jaeger/api/traces/<traceID>`
+
+---
 
 ## Task 3C — Observability MCP tools
 
-<!-- Paste agent responses to "any errors in the last hour?" under normal and failure conditions -->
+Created `mcp/mcp-obs/` with 4 MCP tools:
+- `mcp_obs_logs_search` — search VictoriaLogs with LogsQL queries
+- `mcp_obs_logs_error_count` — count errors per service over a time window
+- `mcp_obs_traces_list` — list recent traces for a service
+- `mcp_obs_traces_get` — fetch a specific trace by ID
+
+**Normal conditions** — "Any LMS backend errors in the last 10 minutes?":
+
+The agent reported 2 errors from the earlier postgres failure with trace IDs and timestamps, showing it can query VictoriaLogs and extract trace IDs.
+
+**After postgres failure** — same question immediately after stopping postgres:
+
+```
+The backend isn't looking great. Here's the current status:
+
+**🔴 LMS Backend: Unhealthy**
+- Health check returning HTTP 404
+- Item count unknown
+
+**📊 Recent Errors (last 30 minutes)**
+- 2 errors from Learning Management Service
+- Both related to database queries on GET /items/
+- Trace IDs: 18b6a147..., 2cb7214f...
+```
+
+The agent used `logs_error_count` → `logs_search` → extracted trace IDs → summarized findings concisely.
 
 ## Task 4A — Multi-step investigation
 
